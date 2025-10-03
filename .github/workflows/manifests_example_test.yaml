@@ -1,0 +1,26 @@
+name: Unit Test
+
+on:
+- push
+- pull_request
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  build:
+    name: Test
+    if: ${{ github.repository == 'kubeflow/manifests' }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@v4
+
+    - name: Install kustomize
+      run: ./tests/kustomize_install.sh
+
+    - name: Unit Test
+      run: |
+        kustomize build example
