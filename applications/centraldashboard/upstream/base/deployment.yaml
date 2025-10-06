@@ -13,11 +13,9 @@ spec:
     metadata:
       labels:
         app: centraldashboard
+      annotations:
         sidecar.istio.io/inject: "true"
     spec:
-      securityContext:
-        seccompProfile:
-          type: RuntimeDefault
       containers:
       - name: centraldashboard
         image: ghcr.io/kubeflow/kubeflow/central-dashboard
@@ -50,11 +48,4 @@ spec:
               fieldPath: metadata.namespace
         - name: COLLECT_METRICS
           value: CD_COLLECT_METRICS
-        securityContext:
-          runAsNonRoot: true
-          allowPrivilegeEscalation: false
-          runAsUser: 1000
-          capabilities:
-            drop:
-            - ALL
       serviceAccountName: centraldashboard

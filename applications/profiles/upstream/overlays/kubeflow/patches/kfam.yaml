@@ -5,12 +5,9 @@ metadata:
 spec:
   template:
     metadata:
-      labels:
+      annotations:
         sidecar.istio.io/inject: "true"
     spec:
-      securityContext:
-        seccompProfile:
-          type: RuntimeDefault
       containers:
       - command:
         - /access-management
@@ -38,6 +35,8 @@ spec:
           protocol: TCP
         securityContext:
           allowPrivilegeEscalation: false
+          seccompProfile:
+            type: RuntimeDefault
           runAsNonRoot: true
           capabilities:
             drop:
