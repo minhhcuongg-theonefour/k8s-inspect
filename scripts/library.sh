@@ -68,7 +68,7 @@ copy_manifests() {
     rm -r "$destination"
   fi
   
-  cp "$source" "$destination" -r
+  cp -r "$source" "$destination"
   echo "Successfully copied all manifests."
 }
 

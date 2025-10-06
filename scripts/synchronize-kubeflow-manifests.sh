@@ -36,7 +36,8 @@ copy_component_manifests() {
     fi
     mkdir -p "$destination_directory"
     
-    cp "${SOURCE_DIRECTORY}/${REPOSITORY_DIRECTORY}/${source_path}/"* "$destination_directory" -r
+    cd "${SOURCE_DIRECTORY}/${REPOSITORY_DIRECTORY}/${source_path}"
+    cp -r ./* "$destination_directory"
     
     echo "Updating README for ${component_name}..."
     local source_text="\[.*\](https://github.com/${REPOSITORY_NAME}/tree/.*/components/${readme_path_pattern})"
@@ -56,19 +57,19 @@ copy_component_manifests "centraldashboard" \
     "centraldashboard/manifests"
 
 copy_component_manifests "jupyter-web-app" \
-    "components/crud-web-applications/jupyter/manifests" \
+    "components/crud-web-apps/jupyter/manifests" \
     "applications/jupyter/jupyter-web-app/upstream" \
-    "crud-web-applications/jupyter/manifests"
+    "crud-web-apps/jupyter/manifests"
 
 copy_component_manifests "volumes-web-app" \
-    "components/crud-web-applications/volumes/manifests" \
+    "components/crud-web-apps/volumes/manifests" \
     "applications/volumes-web-app/upstream" \
-    "crud-web-applications/volumes/manifests"
+    "crud-web-apps/volumes/manifests"
 
 copy_component_manifests "tensorboards-web-app" \
-    "components/crud-web-applications/tensorboards/manifests" \
+    "components/crud-web-apps/tensorboards/manifests" \
     "applications/tensorboard/tensorboards-web-app/upstream" \
-    "crud-web-applications/tensorboards/manifests"
+    "crud-web-apps/tensorboards/manifests"
 
 copy_component_manifests "profile-controller" \
     "components/profile-controller/config" \
