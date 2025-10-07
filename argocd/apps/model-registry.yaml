@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubeflow-model-registry
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    targetRevision: HEAD
+    path: applications/model-registry/upstream/overlays/db
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    targetRevision: HEAD
+    path: applications/model-registry/upstream/options/ui/overlays/istio
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    targetRevision: HEAD
+    path: applications/model-registry/upstream/options/istio
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

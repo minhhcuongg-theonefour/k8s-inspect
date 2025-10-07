@@ -1,0 +1,38 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubeflow-web-apps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  sources:
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    targetRevision: HEAD
+    path: applications/centraldashboard/overlays/oauth2-proxy
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    targetRevision: HEAD
+    path: applications/volumes-web-app/upstream/overlays/istio
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    targetRevision: HEAD
+    path: applications/tensorboard/tensorboards-web-app/upstream/overlays/istio
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    targetRevision: HEAD
+    path: applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m

@@ -1,0 +1,42 @@
+# Sync Wave Configuration for Kubeflow Components
+# This file documents the recommended sync order
+
+# Wave -1: Prerequisites (if any external dependencies)
+# - External secrets
+# - Network policies
+
+# Wave 0: Common Services (Foundation)
+# - Cert-Manager
+# - Istio
+# - Dex
+# - OAuth2-Proxy
+# - Knative
+
+# Wave 1: Core Kubeflow Services
+# - Profiles (RBAC and namespaces)
+# - Admission Webhook
+
+# Wave 2: ML Platform Components
+# - Kubeflow Pipelines
+# - Katib
+# - Jupyter (Notebook Controller)
+
+# Wave 3: Serving and Training
+# - KServe
+# - Training Operator
+
+# Wave 4: Web Applications and UIs
+# - Central Dashboard
+# - Jupyter Web App
+# - Volumes Web App
+# - Tensorboard Web App
+# - Model Registry UI
+
+# Wave 5: Additional Services
+# - Spark Operator
+# - Model Registry
+
+# To apply sync waves, add this annotation to each application:
+# metadata:
+#   annotations:
+#     argocd.argoproj.io/sync-wave: "1"

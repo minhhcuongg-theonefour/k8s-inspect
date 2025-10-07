@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubeflow-pipelines
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    targetRevision: HEAD
+    path: applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  ignoreDifferences:
+  - group: argoproj.io
+    kind: Workflow
+    jsonPointers:
+    - /spec/templates
+  - group: ""
+    kind: ConfigMap
+    name: workflow-controller-configmap
+    jsonPointers:
+    - /data

@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubeflow-training
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    targetRevision: HEAD
+    path: applications/trainer/overlays
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubeflow-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - Force=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  ignoreDifferences:
+  - group: admissionregistration.k8s.io
+    kind: ValidatingAdmissionWebhook
+    jsonPointers:
+    - /webhooks/0/clientConfig/caBundle
+  - group: admissionregistration.k8s.io
+    kind: MutatingAdmissionWebhook
+    jsonPointers:
+    - /webhooks/0/clientConfig/caBundle
