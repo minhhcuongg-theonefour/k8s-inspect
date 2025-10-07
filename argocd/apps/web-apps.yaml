@@ -9,16 +9,16 @@ spec:
   project: default
   sources:
   - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
-    targetRevision: HEAD
+    targetRevision: feat/refactor-synchronize-script
     path: applications/centraldashboard/overlays/oauth2-proxy
   - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
-    targetRevision: HEAD
+    targetRevision: feat/refactor-synchronize-script
     path: applications/volumes-web-app/upstream/overlays/istio
   - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
-    targetRevision: HEAD
+    targetRevision: feat/refactor-synchronize-script
     path: applications/tensorboard/tensorboards-web-app/upstream/overlays/istio
   - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
-    targetRevision: HEAD
+    targetRevision: feat/refactor-synchronize-script
     path: applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
   destination:
     server: https://kubernetes.default.svc

@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
-    targetRevision: HEAD
+    targetRevision: feat/refactor-synchronize-script
     path: applications/kserve/kserve
   destination:
     server: https://kubernetes.default.svc
