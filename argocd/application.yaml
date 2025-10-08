@@ -6,9 +6,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/kubeflow/manifests'
-    targetRevision: v1.9.1
-    path: stacks/kubeflow
+    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
+    targetRevision: feat/refactor-synchronize-script
   destination:
     server: https://kubernetes.default.svc
     namespace: kubeflow
