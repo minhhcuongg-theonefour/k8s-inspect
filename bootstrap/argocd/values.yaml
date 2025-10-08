@@ -4,8 +4,8 @@ configs:
   ## Creates a secret for each key/value specified below to create repositories
   ## Note: the last example in the list would use a repository credential template, configured under "configs.credentialTemplates".
   repositories:
-    ds101-cluster:
-      url: https://github.com/devsuccess101/ds101-cluster
+    ml-platform-cluster:
+      url: https://github.com/minhhcuongg-theonefour/k8s-inspect
       type: git
     bitnami:
       type: helm

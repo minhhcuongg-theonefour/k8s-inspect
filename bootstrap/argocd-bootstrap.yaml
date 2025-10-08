@@ -8,12 +8,11 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
+    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
     targetRevision: feat/refactor-synchronize-script
-    path: bootstrap/argocd
+    path: bootstrap/apps
     directory:
       recurse: true
-      exclude: 'argocd/*'
   destination:
     name: in-cluster
     namespace: argocd
