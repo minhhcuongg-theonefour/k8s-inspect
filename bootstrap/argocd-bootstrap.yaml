@@ -13,6 +13,7 @@ spec:
     path: bootstrap/apps
     directory:
       recurse: true
+      exclude: 'argocd/*,apps/kustomization.yaml'
   destination:
     name: in-cluster
     namespace: argocd
