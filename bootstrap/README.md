@@ -37,10 +37,10 @@ find argocd/apps -name "*.yaml" -exec sed -i 's|your-org/kubeflow-manifests|YOUR
 
 ```bash
 # Apply the root application
-kubectl apply -f argocd/app-of-apps.yaml
+kubectl apply -f bootstrap/argocd/app-of-apps.yaml
 
 # Or apply individual applications
-kubectl apply -f argocd/apps/
+kubectl apply -f bootstrap/argocd/apps/
 ```
 
 ### 3. Monitor Deployment
@@ -51,7 +51,7 @@ kubectl get applications -n argocd
 
 # Check application status
 argocd app list
-argocd app get kubeflow-app-of-apps
+argocd app get kubeflow-bootstrap
 ```
 
 ## Component Details

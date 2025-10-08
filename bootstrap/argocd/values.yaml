@@ -16,5 +16,5 @@ configs:
     ory:
       type: helm
       url: https://k8s.ory.sh/helm/charts
-  # -- Repository credentials to be used as Templates for other repos
-  ## Creates a secret for each key/value specified below to create repository credentials
+  cm:
+    kustomize.buildOptions: --enable-helm

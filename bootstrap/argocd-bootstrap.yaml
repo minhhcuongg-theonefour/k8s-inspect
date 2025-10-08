@@ -1,22 +1,25 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubeflow-app-of-apps
+  name: argocd-bootstrap
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
     targetRevision: feat/refactor-synchronize-script
-    path: argocd/apps
+    path: bootstrap/argocd
+    directory:
+      recurse: true
+      exclude: 'argocd/*'
   destination:
-    server: https://kubernetes.default.svc
+    name: in-cluster
     namespace: argocd
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
+    - CreateNamespace=true
