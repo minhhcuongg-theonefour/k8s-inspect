@@ -10,5 +10,6 @@ apply-argocd:
 apply-argocd-bootstrap:
 	kubectl apply -f argocd-bootstrap.yaml
 
+apply-argocd-all: create-argocd-resources apply-argocd-bootstrap
 
 .PHONY: plan-argocd create-argocd apply-argocd
