@@ -12,6 +12,13 @@
 [._]ss[a-gi-z]
 [._]sw[a-p]
 
+# Makefile
+/Makefile
+
+# Helm charts
+**/.helm/
+**/charts/
+**/tmp-helm-*/
 
 # Scanning reports of trivy
 image_lists/*

@@ -1,0 +1,20 @@
+## Argo Configs
+configs:
+  # -- Repositories list to be used by applications
+  ## Creates a secret for each key/value specified below to create repositories
+  ## Note: the last example in the list would use a repository credential template, configured under "configs.credentialTemplates".
+  repositories:
+    ds101-cluster:
+      url: https://github.com/devsuccess101/ds101-cluster
+      type: git
+    bitnami:
+      type: helm
+      url: https://charts.bitnami.com/bitnami
+    devspace:
+      type: helm
+      url: https://charts.devspace.sh
+    ory:
+      type: helm
+      url: https://k8s.ory.sh/helm/charts
+  # -- Repository credentials to be used as Templates for other repos
+  ## Creates a secret for each key/value specified below to create repository credentials
