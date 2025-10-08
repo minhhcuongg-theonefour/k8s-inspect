@@ -46,4 +46,4 @@ fi
 echo
 echo "🔑 To access Argo CD UI:"
 echo "  kubectl get svc -n $NAMESPACE argocd-server"
-echo "  kubectl get secret -n $NAMESPACE argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d && echo"
+echo "  kubectl get secret argocd-initial-admin-secret -ojsonpath={.data.password} | base64 --decode"

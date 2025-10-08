@@ -4,32 +4,32 @@ metadata:
   name: kubeflow-web-apps
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   sources:
-  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
     targetRevision: feat/refactor-synchronize-script
     path: applications/centraldashboard/overlays/oauth2-proxy
-  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
     targetRevision: feat/refactor-synchronize-script
     path: applications/volumes-web-app/upstream/overlays/istio
-  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
     targetRevision: feat/refactor-synchronize-script
     path: applications/tensorboard/tensorboards-web-app/upstream/overlays/istio
-  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
     targetRevision: feat/refactor-synchronize-script
     path: applications/tensorboard/tensorboard-controller/upstream/overlays/kubeflow
   destination:
     server: https://kubernetes.default.svc
-    namespace: kubeflow
+    namespace: istio-system
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
+    - CreateNamespace=true
+    - ServerSideApply=true
     retry:
       limit: 5
       backoff:
