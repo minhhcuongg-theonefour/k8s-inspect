@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubeflow-training
+  name: kubeflow-trainer
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io

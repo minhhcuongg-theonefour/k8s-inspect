@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubeflow-spark
+  name: kubeflow-trainer
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "3"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -12,10 +12,10 @@ spec:
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
     targetRevision: feat/refactor-synchronize-script
-    path: applications/spark/spark-operator/overlays/kubeflow
+    path: applications/trainer/overlays
   destination:
     server: https://kubernetes.default.svc
-    namespace: kubeflow
+    namespace: kubeflow-system
   syncPolicy:
     automated:
       prune: true
@@ -23,6 +23,7 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - Force=true
     retry:
       limit: 5
       backoff:
