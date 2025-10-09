@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gpu-operator
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    name: in-cluster
+    namespace: gpu-operator
+  sources:
+  - repoURL: https://helm.ngc.nvidia.com/nvidia
+    targetRevision: v25.3.4
+    chart: gpu-operator
+    helm:
+      releaseName: nvidia
+  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
+    targetRevision: feat/refactor-synchronize-script
+    ref: values
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true
+  ignoreDifferences:
+  - group: argoproj.io
+    kind: Application
+    jsonPointers:
+    - /status
