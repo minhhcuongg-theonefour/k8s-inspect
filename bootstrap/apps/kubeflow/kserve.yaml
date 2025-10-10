@@ -1,5 +1,5 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Kustomization
+kind: Application
 metadata:
   name: kubeflow-kserve
   namespace: argocd
