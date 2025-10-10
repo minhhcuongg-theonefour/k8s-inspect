@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/refactor-synchronize-script
+    targetRevision: feat/sync-wave
     path: bootstrap/argocd
   destination:
     name: in-cluster

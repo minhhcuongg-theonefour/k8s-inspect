@@ -89,7 +89,7 @@ The previous implementation had **3 configuration errors** that would cause depl
   - User profiles exist
   - RBAC permissions are configured
   - Service mesh sidecars are properly injected
-  
+
 **Symptom without fix:**
 - Pods would fail to start due to missing ServiceAccounts
 - RBAC errors: "cannot get/list resources in namespace istio-system"
@@ -205,7 +205,7 @@ All 9 existing applications now have sync wave annotations for proper deployment
 
 **✅ Phase 1a: Critical Path Fixes** - COMPLETED
 - Fixed web-apps namespace
-- Fixed model-registry path  
+- Fixed model-registry path
 - Renamed training to trainer
 - Added sync wave annotations to all 9 apps
 
@@ -271,7 +271,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/refactor-synchronize-script
+    targetRevision: feat/sync-wave
     path: applications/profiles/pss
   destination:
     server: https://kubernetes.default.svc
@@ -308,7 +308,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/refactor-synchronize-script
+    targetRevision: feat/sync-wave
     path: applications/admission-webhook/upstream/overlays/cert-manager
   destination:
     server: https://kubernetes.default.svc
@@ -345,7 +345,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/refactor-synchronize-script
+    targetRevision: feat/sync-wave
     path: applications/pvcviewer-controller/upstream/base
   destination:
     server: https://kubernetes.default.svc
@@ -382,7 +382,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/refactor-synchronize-script
+    targetRevision: feat/sync-wave
     path: common/user-namespace/base
   destination:
     server: https://kubernetes.default.svc
@@ -458,7 +458,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/refactor-synchronize-script
+    targetRevision: feat/sync-wave
     path: bootstrap/apps/kubeflow
   destination:
     server: https://kubernetes.default.svc
@@ -823,6 +823,6 @@ When adding new applications:
 ## 📝 Notes
 
 - **Repository**: https://github.com/minhhcuongg-theonefour/k8s-inspect
-- **Branch**: feat/refactor-synchronize-script
+- **Branch**: feat/sync-wave
 - **ArgoCD Version**: 8.5.9
 - **Last Updated**: 2025-10-09

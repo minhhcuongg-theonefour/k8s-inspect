@@ -11,7 +11,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
-    targetRevision: feat/refactor-synchronize-script
+    targetRevision: feat/sync-wave
     path: applications/model-registry/upstream/overlays/db
   destination:
     server: https://kubernetes.default.svc

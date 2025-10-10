@@ -10,7 +10,7 @@
 #=============================================================================
 
 REPO_URL ?= https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-TARGET_REVISION ?= feat/refactor-synchronize-script
+TARGET_REVISION ?= feat/sync-wave
 
 #=============================================================================
 # Help

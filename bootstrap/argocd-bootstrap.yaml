@@ -9,8 +9,8 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/refactor-synchronize-script
-    path: bootstrap
+    targetRevision: feat/sync-wave
+    path: bootstrap/apps
     directory:
       recurse: true
       exclude: 'argocd/*,apps/kustomization.yaml'
