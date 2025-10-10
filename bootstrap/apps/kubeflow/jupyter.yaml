@@ -12,7 +12,7 @@ spec:
   sources:
   - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
     targetRevision: feat/sync-wave
-    path: applications/jupyter/notebook-controller/upstream/overlays/kubeflow
+    path: applications/jupyter/notebook-controller/upstream/base
   - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
     targetRevision: feat/sync-wave
     path: applications/jupyter/jupyter-web-app/upstream/overlays/istio
