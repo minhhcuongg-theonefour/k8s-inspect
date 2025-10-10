@@ -1,5 +1,5 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Application
+kind: Kustomization
 metadata:
   name: kubeflow-web-apps
   namespace: argocd
