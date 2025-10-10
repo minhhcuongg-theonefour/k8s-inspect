@@ -320,6 +320,6 @@ apply-argocd: deploy-argocd
 
 apply-argocd-bootstrap: deploy-bootstrap
 
-apply-argocd-all: install-argocd deploy-bootstrap
+apply-argocd-all: install-argocd apply-argocd deploy-bootstrap
 	@echo "ArgoCD and bootstrap deployed (legacy method)"
 	@echo "TIP: Consider using: make deploy-app-of-apps"
