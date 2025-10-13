@@ -39,4 +39,4 @@ commit_changes "$MANIFESTS_DIRECTORY" "Update common/dex manifests to ${DEX_RELE
   "$DESTINATION_DIRECTORY" \
   "README.md"
 
-echo "Synchronization completed successfully." 
+echo "Synchronization completed successfully."

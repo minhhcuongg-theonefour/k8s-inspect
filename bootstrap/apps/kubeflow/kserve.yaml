@@ -3,13 +3,15 @@ kind: Application
 metadata:
   name: kubeflow-kserve
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
-    targetRevision: feat/refactor-synchronize-script
+    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
+    targetRevision: feat/sync-wave
     path: applications/kserve/kserve
   destination:
     server: https://kubernetes.default.svc
@@ -19,9 +21,9 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
-      - Force=true
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - Force=true
     retry:
       limit: 5
       backoff:

@@ -3,14 +3,16 @@ kind: Application
 metadata:
   name: kubeflow-model-registry
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
-    targetRevision: feat/refactor-synchronize-script
-    path: applications/model-registry/upstream/base
+    targetRevision: feat/sync-wave
+    path: applications/model-registry/upstream/overlays/db
   destination:
     server: https://kubernetes.default.svc
     namespace: kubeflow

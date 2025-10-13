@@ -1,15 +1,15 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubeflow-training
+  name: kubeflow-trainer
   namespace: argocd
   finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git  # Replace with your repo
-    targetRevision: feat/refactor-synchronize-script
+    repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
+    targetRevision: feat/sync-wave
     path: applications/trainer/overlays
   destination:
     server: https://kubernetes.default.svc
@@ -19,9 +19,9 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-      - CreateNamespace=true
-      - ServerSideApply=true
-      - Force=true
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - Force=true
     retry:
       limit: 5
       backoff:

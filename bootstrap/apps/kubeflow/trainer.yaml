@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubeflow-pipelines
+  name: kubeflow-trainer
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "3"
   finalizers:
   - resources-finalizer.argocd.argoproj.io
 spec:
@@ -12,10 +12,10 @@ spec:
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
     targetRevision: feat/sync-wave
-    path: applications/pipeline/upstream/env/cert-manager/platform-agnostic-multi-user
+    path: applications/trainer/overlays
   destination:
     server: https://kubernetes.default.svc
-    namespace: kubeflow
+    namespace: kubeflow-system
   syncPolicy:
     automated:
       prune: true
@@ -23,6 +23,7 @@ spec:
     syncOptions:
     - CreateNamespace=true
     - ServerSideApply=true
+    - Force=true
     retry:
       limit: 5
       backoff:
@@ -30,12 +31,11 @@ spec:
         factor: 2
         maxDuration: 3m
   ignoreDifferences:
-  - group: argoproj.io
-    kind: Workflow
+  - group: admissionregistration.k8s.io
+    kind: ValidatingAdmissionWebhook
     jsonPointers:
-    - /spec/templates
-  - group: ""
-    kind: ConfigMap
-    name: workflow-controller-configmap
+    - /webhooks/0/clientConfig/caBundle
+  - group: admissionregistration.k8s.io
+    kind: MutatingAdmissionWebhook
     jsonPointers:
-    - /data
+    - /webhooks/0/clientConfig/caBundle
