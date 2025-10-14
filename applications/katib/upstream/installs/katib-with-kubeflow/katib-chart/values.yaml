@@ -1,0 +1,249 @@
+config:
+  katibConfigYaml: |-
+    ---
+    apiVersion: config.kubeflow.org/v1beta1
+    kind: KatibConfig
+    init:
+      controller:
+        webhookPort: 8443
+        trialResources:
+          - Job.v1.batch
+          - TFJob.v1.kubeflow.org
+          - PyTorchJob.v1.kubeflow.org
+          - MPIJob.v1.kubeflow.org
+          - XGBoostJob.v1.kubeflow.org
+    runtime:
+      metricsCollectors:
+        - kind: StdOut
+          image: ghcr.io/kubeflow/katib/file-metrics-collector:v0.18.0
+        - kind: File
+          image: ghcr.io/kubeflow/katib/file-metrics-collector:v0.18.0
+        - kind: TensorFlowEvent
+          image: ghcr.io/kubeflow/katib/tfevent-metrics-collector:v0.18.0
+          resources:
+            limits:
+              memory: 1Gi
+      suggestions:
+        - algorithmName: random
+          image: ghcr.io/kubeflow/katib/suggestion-hyperopt:v0.18.0
+        - algorithmName: tpe
+          image: ghcr.io/kubeflow/katib/suggestion-hyperopt:v0.18.0
+        - algorithmName: grid
+          image: ghcr.io/kubeflow/katib/suggestion-optuna:v0.18.0
+        - algorithmName: hyperband
+          image: ghcr.io/kubeflow/katib/suggestion-hyperband:v0.18.0
+        - algorithmName: bayesianoptimization
+          image: ghcr.io/kubeflow/katib/suggestion-skopt:v0.18.0
+        - algorithmName: cmaes
+          image: ghcr.io/kubeflow/katib/suggestion-goptuna:v0.18.0
+        - algorithmName: sobol
+          image: ghcr.io/kubeflow/katib/suggestion-goptuna:v0.18.0
+        - algorithmName: multivariate-tpe
+          image: ghcr.io/kubeflow/katib/suggestion-optuna:v0.18.0
+        - algorithmName: enas
+          image: ghcr.io/kubeflow/katib/suggestion-enas:v0.18.0
+          resources:
+            limits:
+              memory: 400Mi
+        - algorithmName: darts
+          image: ghcr.io/kubeflow/katib/suggestion-darts:v0.18.0
+        - algorithmName: pbt
+          image: ghcr.io/kubeflow/katib/suggestion-pbt:v0.18.0
+          persistentVolumeClaimSpec:
+            accessModes:
+              - ReadWriteMany
+            resources:
+              requests:
+                storage: 5Gi
+      earlyStoppings:
+        - algorithmName: medianstop
+          image: ghcr.io/kubeflow/katib/earlystopping-medianstop:v0.18.0
+controller:
+  katibController:
+    args:
+      - --katib-config=/katib-config.yaml
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    image:
+      repository: ghcr.io/kubeflow/katib/katib-controller
+      tag: v0.18.0
+  ports:
+    - name: webhook
+      port: 443
+      protocol: TCP
+      targetPort: 8443
+    - name: metrics
+      port: 8080
+      targetPort: 8080
+    - name: healthz
+      port: 18080
+      targetPort: 18080
+  replicas: 1
+  serviceAccount:
+    annotations: {}
+  type: ClusterIP
+dbManager:
+  katibDbManager:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1000
+      seccompProfile:
+        type: RuntimeDefault
+    env:
+      dbName: mysql
+    image:
+      repository: ghcr.io/kubeflow/katib/katib-db-manager
+      tag: v0.18.0
+  ports:
+    - name: api
+      port: 6789
+      protocol: TCP
+      targetPort: 0
+  replicas: 1
+  type: ClusterIP
+kubernetesClusterDomain: cluster.local
+mysql:
+  katibMysql:
+    args:
+      - --datadir
+      - /var/lib/mysql/datadir
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsGroup: 999
+      runAsNonRoot: true
+      runAsUser: 999
+      seccompProfile:
+        type: RuntimeDefault
+    env:
+      mysqlAllowEmptyPassword: "true"
+      mysqlDatabase: katib
+    image:
+      repository: mysql
+      tag: 8.0.29
+  podSecurityContext:
+    fsGroup: 999
+    fsGroupChangePolicy: OnRootMismatch
+  ports:
+    - name: dbapi
+      port: 3306
+      protocol: TCP
+      targetPort: 0
+  replicas: 1
+  strategy:
+    type: Recreate
+  type: ClusterIP
+mysqlSecrets:
+  mysqlRootPassword: "12345678"
+pvc:
+  mysql:
+    storageRequest: 10Gi
+trialTemplates:
+  defaultTrialTemplateYaml: |-
+    apiVersion: batch/v1
+    kind: Job
+    spec:
+      template:
+        spec:
+          containers:
+            - name: training-container
+              image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.18.0
+              command:
+                - "python3"
+                - "/opt/pytorch-mnist/mnist.py"
+                - "--epochs=1"
+                - "--batch-size=16"
+                - "--lr=${trialParameters.learningRate}"
+                - "--momentum=${trialParameters.momentum}"
+          restartPolicy: Never
+  enasCPUTemplate: |-
+    apiVersion: batch/v1
+    kind: Job
+    spec:
+      template:
+        spec:
+          containers:
+            - name: training-container
+              image: ghcr.io/kubeflow/katib/enas-cnn-cifar10-cpu:v0.18.0
+              command:
+                - python3
+                - -u
+                - RunTrial.py
+                - --num_epochs=1
+                - "--architecture=\"${trialParameters.neuralNetworkArchitecture}\""
+                - "--nn_config=\"${trialParameters.neuralNetworkConfig}\""
+          restartPolicy: Never
+  pytorchJobTemplate: |-
+    apiVersion: kubeflow.org/v1
+    kind: PyTorchJob
+    spec:
+      pytorchReplicaSpecs:
+        Master:
+          replicas: 1
+          restartPolicy: OnFailure
+          template:
+            spec:
+              containers:
+                - name: pytorch
+                  image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.18.0
+                  command:
+                    - "python3"
+                    - "/opt/pytorch-mnist/mnist.py"
+                    - "--epochs=1"
+                    - "--lr=${trialParameters.learningRate}"
+                    - "--momentum=${trialParameters.momentum}"
+        Worker:
+          replicas: 2
+          restartPolicy: OnFailure
+          template:
+            spec:
+              containers:
+                - name: pytorch
+                  image: ghcr.io/kubeflow/katib/pytorch-mnist-cpu:v0.18.0
+                  command:
+                    - "python3"
+                    - "/opt/pytorch-mnist/mnist.py"
+                    - "--epochs=1"
+                    - "--lr=${trialParameters.learningRate}"
+                    - "--momentum=${trialParameters.momentum}"
+ui:
+  katibUi:
+    args:
+      - --port=8080
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1000
+    env:
+      appDisableAuth: "false"
+    image:
+      repository: ghcr.io/kubeflow/katib/katib-ui
+      tag: v0.18.0
+  podSecurityContext:
+    seccompProfile:
+      type: RuntimeDefault
+  ports:
+    - name: ui
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+  replicas: 1
+  serviceAccount:
+    annotations: {}
+  type: ClusterIP

@@ -1,0 +1,78 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "katib-chart.fullname" . }}-kubeflow.org
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "katib-chart.fullname" . }}-webhook-cert
+  labels:
+  {{- include "katib-chart.labels" . | nindent 4 }}
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: '{{ include "katib-chart.fullname" . }}-controller'
+      namespace: '{{ .Release.Namespace }}'
+      path: /mutate-experiment
+  name: defaulter.experiment.katib.kubeflow.org
+  rules:
+  - apiGroups:
+    - kubeflow.org
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - experiments
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: '{{ include "katib-chart.fullname" . }}-controller'
+      namespace: '{{ .Release.Namespace }}'
+      path: /mutate-pod
+  name: mutator.pod.katib.kubeflow.org
+  namespaceSelector:
+    matchLabels:
+      katib.kubeflow.org/metrics-collector-injection: enabled
+  rules:
+  - apiGroups:
+    - ""
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    resources:
+    - pods
+  sideEffects: None
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ include "katib-chart.fullname" . }}-kubeflow.org
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "katib-chart.fullname" . }}-webhook-cert
+  labels:
+  {{- include "katib-chart.labels" . | nindent 4 }}
+webhooks:
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: '{{ include "katib-chart.fullname" . }}-controller'
+      namespace: '{{ .Release.Namespace }}'
+      path: /validate-experiment
+  name: validator.experiment.katib.kubeflow.org
+  rules:
+  - apiGroups:
+    - kubeflow.org
+    apiVersions:
+    - v1beta1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - experiments
+  sideEffects: None

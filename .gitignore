@@ -12,8 +12,9 @@
 [._]ss[a-gi-z]
 [._]sw[a-p]
 
+
 # Makefile
-/Makefile
+# /Makefile
 
 # Helm charts
 **/.helm/

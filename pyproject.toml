@@ -1,0 +1,19 @@
+[project]
+name = "kubeflow-pack"
+version = "0.1.0"
+authors = [
+    { email = "thomas@gmail.com" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv>=1.1.1",
+    "pyyaml>=6.0.3",
+    "requests>=2.32.5",
+]
+
+[tool.uv]
+package = false
+
+[build-system]
+requires = ["uv_build>=0.8.20,<0.9.0"]
+build-backend = "uv_build"
