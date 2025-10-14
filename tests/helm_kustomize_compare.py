@@ -10,11 +10,11 @@ def load_manifests(file_path: str) -> List[Dict]:
     """Load YAML manifests from file."""
     with open(file_path, 'r') as f:
         content = f.read()
-    
+
     docs = []
     try:
         for doc in yaml.safe_load_all(content):
-            if doc:  
+            if doc:
                 docs.append(doc)
     except yaml.YAMLError:
         for doc_str in content.split('---'):
@@ -22,11 +22,11 @@ def load_manifests(file_path: str) -> List[Dict]:
             if doc_str:
                 try:
                     doc = yaml.safe_load(doc_str)
-                    if doc:  
+                    if doc:
                         docs.append(doc)
                 except yaml.YAMLError:
                     continue
-    
+
     return docs
 
 def clean_helm_metadata(obj: Any, component: str = "katib") -> Any:
@@ -50,7 +50,7 @@ def clean_helm_metadata(obj: Any, component: str = "katib") -> Any:
                                 # Standard filtering for Katib and Model Registry
                                 helm_labels = [
                                     'app.kubernetes.io/managed-by',
-                                    'app.kubernetes.io/version', 
+                                    'app.kubernetes.io/version',
                                     'app.kubernetes.io/name',
                                     'app.kubernetes.io/instance',
                                     'app.kubernetes.io/component'
@@ -85,7 +85,7 @@ def normalize_kustomize_refs(obj: Any, path: str = "") -> Any:
         normalized = {}
         for key, value in obj.items():
             current_path = f"{path}.{key}" if path else key
-            
+
             # Normalize secret/configmap references in common locations
             if key == "name" and isinstance(value, str):
                 if any(ref_pattern in path for ref_pattern in [
@@ -96,7 +96,7 @@ def normalize_kustomize_refs(obj: Any, path: str = "") -> Any:
                     value = re.sub(r'-[a-z0-9]{10}$', '', value)
                 elif 'volumes' in path and 'configMap' in path:
                     value = re.sub(r'-[a-z0-9]{10}$', '', value)
-            
+
             normalized[key] = normalize_kustomize_refs(value, current_path)
         return normalized
     elif isinstance(obj, list):
@@ -107,13 +107,13 @@ def normalize_kustomize_refs(obj: Any, path: str = "") -> Any:
 def normalize_manifest(manifest: Dict, component: str = "katib") -> Dict:
     """Normalize manifest by removing/standardizing certain fields."""
     normalized = manifest.copy()
-    
+
     # Clean Helm-specific metadata
     normalized = clean_helm_metadata(normalized, component)
-    
+
     # Normalize Kustomize hash references
     normalized = normalize_kustomize_refs(normalized)
-    
+
     # Handle ConfigMap data normalization (only for Katib)
     if component == "katib" and normalized.get('kind') == 'ConfigMap' and 'data' in normalized:
         data = normalized['data']
@@ -129,33 +129,33 @@ def normalize_manifest(manifest: Dict, component: str = "katib") -> Dict:
             else:
                 normalized_data[key] = value
         normalized['data'] = normalized_data
-    
+
     if 'metadata' in normalized and 'name' in normalized['metadata']:
         kind = normalized.get('kind', '')
         if kind in ['Secret', 'ConfigMap']:
             name = normalized['metadata']['name']
             normalized['metadata']['name'] = re.sub(r'-[a-z0-9]{10}$', '', name)
-    
+
     if 'metadata' in normalized:
         metadata = normalized['metadata']
-        
+
         metadata.pop('generation', None)
         metadata.pop('resourceVersion', None)
         metadata.pop('uid', None)
         metadata.pop('creationTimestamp', None)
         metadata.pop('managedFields', None)
-    
+
     normalized.pop('status', None)
-    
+
     def remove_empty_values(obj):
         if isinstance(obj, dict):
-            return {k: remove_empty_values(v) for k, v in obj.items() 
+            return {k: remove_empty_values(v) for k, v in obj.items()
                    if v is not None and v != {} and v != []}
         elif isinstance(obj, list):
             return [remove_empty_values(item) for item in obj if item is not None]
         else:
             return obj
-    
+
     return remove_empty_values(normalized)
 
 def get_resource_key(manifest: Dict, component: str = "katib") -> str:
@@ -163,10 +163,10 @@ def get_resource_key(manifest: Dict, component: str = "katib") -> str:
     kind = manifest.get('kind', 'Unknown')
     name = manifest.get('metadata', {}).get('name', 'unknown')
     namespace = manifest.get('metadata', {}).get('namespace', '')
-    
+
     if kind in ['Secret', 'ConfigMap']:
         name = re.sub(r'-[a-z0-9]{10}$', '', name)
-    
+
     # Include namespace in key only for Katib
     if component == "katib" and namespace:
         return f"{kind}/{namespace}/{name}"
@@ -176,11 +176,11 @@ def get_resource_key(manifest: Dict, component: str = "katib") -> str:
 def deep_diff(obj1: Any, obj2: Any, path: str = "") -> List[str]:
     """Compare two objects and return list of differences."""
     differences = []
-    
+
     if type(obj1) != type(obj2):
         differences.append(f"{path}: type mismatch ({type(obj1).__name__} vs {type(obj2).__name__})")
         return differences
-    
+
     if isinstance(obj1, dict):
         all_keys = set(obj1.keys()) | set(obj2.keys())
         for key in sorted(all_keys):
@@ -191,17 +191,17 @@ def deep_diff(obj1: Any, obj2: Any, path: str = "") -> List[str]:
                 differences.append(f"{key_path}: missing in helm")
             else:
                 differences.extend(deep_diff(obj1[key], obj2[key], key_path))
-    
+
     elif isinstance(obj1, list):
         if len(obj1) != len(obj2):
             differences.append(f"{path}: list length mismatch ({len(obj1)} vs {len(obj2)})")
         else:
             for i, (item1, item2) in enumerate(zip(obj1, obj2)):
                 differences.extend(deep_diff(item1, item2, f"{path}[{i}]"))
-    
+
     elif obj1 != obj2:
         differences.append(f"{path}: '{obj1}' != '{obj2}'")
-    
+
     return differences
 
 def get_expected_helm_extras(component: str, scenario: str) -> set:
@@ -223,59 +223,59 @@ def compare_manifests(kustomize_file: str, helm_file: str, component: str, scena
     """Compare Kustomize and Helm manifests."""
     kustomize_manifests = load_manifests(kustomize_file)
     helm_manifests = load_manifests(helm_file)
-    
+
     kustomize_resources = {}
     helm_resources = {}
-    
+
     for manifest in kustomize_manifests:
         normalized = normalize_manifest(manifest, component)
         key = get_resource_key(normalized, component)
         kustomize_resources[key] = normalized
-    
+
     for manifest in helm_manifests:
         normalized = normalize_manifest(manifest, component)
         key = get_resource_key(normalized, component)
         helm_resources[key] = normalized
-    
+
     kustomize_keys = set(kustomize_resources.keys())
     helm_keys = set(helm_resources.keys())
-    
+
     common_keys = kustomize_keys & helm_keys
     only_in_kustomize = kustomize_keys - helm_keys
     only_in_helm = helm_keys - kustomize_keys
-    
+
     expected_helm_extras = get_expected_helm_extras(component, scenario)
     unexpected_helm_extras = only_in_helm - expected_helm_extras
-    
+
     differences_found = []
     success = True
-    
+
     if only_in_kustomize:
         print(f"Resources only in Kustomize: {len(only_in_kustomize)}")
         success = False
         differences_found.extend(only_in_kustomize)
-    
+
     if unexpected_helm_extras:
         print(f"Unexpected resources only in Helm: {len(unexpected_helm_extras)}")
         success = False
         differences_found.extend(unexpected_helm_extras)
-    
+
     # Compare common resources
     for key in sorted(common_keys):
         kustomize_resource = kustomize_resources[key]
         helm_resource = helm_resources[key]
-        
+
         differences = deep_diff(kustomize_resource, helm_resource)
-        
+
         if differences:
             print(f"Differences in {key}: {len(differences)} fields")
             differences_found.append(key)
             success = False
-    
+
     if not success:
         print(f"Found differences in {len(differences_found)} resources")
         return False
-    
+
     return True
 
 if __name__ == "__main__":
@@ -283,17 +283,17 @@ if __name__ == "__main__":
         print("Usage: python compare.py <kustomize_file> <helm_file> <component> <scenario> [namespace] [--verbose]")
         print("Components: katib, model-registry, kserve-models-web-app")
         sys.exit(1)
-    
+
     kustomize_file = sys.argv[1]
     helm_file = sys.argv[2]
     component = sys.argv[3]
     scenario = sys.argv[4]
     namespace = sys.argv[5] if len(sys.argv) > 5 and not sys.argv[5].startswith('--') else ""
-    
+
     if component not in ["katib", "model-registry", "kserve-models-web-app", "notebook-controller"]:
         print(f"ERROR: Unknown component: {component}")
         print("Supported components: katib, model-registry, kserve-models-web-app, notebook-controller")
         sys.exit(1)
-    
+
     success = compare_manifests(kustomize_file, helm_file, component, scenario, namespace)
-    sys.exit(0 if success else 1) 
+    sys.exit(0 if success else 1)

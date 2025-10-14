@@ -6,18 +6,18 @@ metadata:
 spec:
   podSelector:
     matchExpressions:
-    - key: app
-      operator: In
-      values:
-      - model-registry-ui
+      - key: app
+        operator: In
+        values:
+          - model-registry-ui
   ingress:
-  - from:
-    - namespaceSelector:
-        matchExpressions:
-        - key: kubernetes.io/metadata.name
-          operator: In
-          values:
-          - istio-system
-    - podSelector: {}
+    - from:
+        - namespaceSelector:
+            matchExpressions:
+              - key: kubernetes.io/metadata.name
+                operator: In
+                values:
+                  - istio-system
+        - podSelector: {}
   policyTypes:
-  - Ingress
+    - Ingress

@@ -4,15 +4,15 @@ metadata:
   name: oauth2-proxy
 spec:
   gateways:
-  - kubeflow/kubeflow-gateway
+    - kubeflow/kubeflow-gateway
   hosts:
-  - '*'
+    - "*"
   http:
-  - match:
-    - uri:
-        prefix: /oauth2/
-    route:
-    - destination:
-        host: OAUTH2_PROXY_SERVICE.OAUTH2_PROXY_NAMESPACE.svc.cluster.local
-        port:
-          number: 80
+    - match:
+        - uri:
+            prefix: /oauth2/
+      route:
+        - destination:
+            host: OAUTH2_PROXY_SERVICE.OAUTH2_PROXY_NAMESPACE.svc.cluster.local
+            port:
+              number: 80

@@ -1,5 +1,4 @@
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -8,12 +7,11 @@ metadata:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-admin: "true"
 aggregationRule:
   clusterRoleSelectors:
-  - matchLabels:
-      rbac.authorization.kubeflow.org/aggregate-to-kubeflow-istio-admin: "true"
+    - matchLabels:
+        rbac.authorization.kubeflow.org/aggregate-to-kubeflow-istio-admin: "true"
 rules: []
 
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -22,23 +20,22 @@ metadata:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-edit: "true"
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-istio-admin: "true"
 rules:
-- apiGroups:
-  - istio.io
-  - networking.istio.io
-  resources: ["*"]
-  verbs:
-  - get
-  - list
-  - watch
-  # For security reasons we do not enable this by default. It could destabilize the platform and allow exploits.
-  #- create
-  #- delete
-  #- deletecollection
-  #- patch
-  #- update
+  - apiGroups:
+      - istio.io
+      - networking.istio.io
+    resources: ["*"]
+    verbs:
+      - get
+      - list
+      - watch
+    # For security reasons we do not enable this by default. It could destabilize the platform and allow exploits.
+    #- create
+    #- delete
+    #- deletecollection
+    #- patch
+    #- update
 
 ---
-
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -46,19 +43,19 @@ metadata:
   labels:
     rbac.authorization.kubeflow.org/aggregate-to-kubeflow-view: "true"
 rules:
-- apiGroups:
-  - istio.io
-  - networking.istio.io
-  resources: ["*"]
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - security.istio.io
-  resources:
-  - authorizationpolicies
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - istio.io
+      - networking.istio.io
+    resources: ["*"]
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - security.istio.io
+    resources:
+      - authorizationpolicies
+    verbs:
+      - get
+      - list
+      - watch

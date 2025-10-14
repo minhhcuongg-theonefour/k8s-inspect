@@ -10,7 +10,7 @@ spec:
   template:
     spec:
       containers:
-      - name: istio-proxy
-        securityContext:
-          seccompProfile:
-            type: RuntimeDefault
+        - name: istio-proxy
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault

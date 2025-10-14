@@ -1,3 +1,5 @@
+include env/registry.env
+
 cluster-list:
 	k3d cluster list
 

@@ -10,18 +10,18 @@ spec:
       istio: cluster-local-gateway
   action: DENY
   rules:
-  # Deny requests without a valid principal (JWT)
-  - from:
-    - source:
-        notRequestPrincipals: ["*"]
-    to:
-    - operation:
-        # Exclude Knative health check and metrics paths
-        notPaths:
-        - "/healthz"
-        - "/ready"
-        - "/wait-for-drain"
-        - "/metrics"
-        - "/stats/prometheus"
-        - "*/healthz"
-        - "*/ready"
+    # Deny requests without a valid principal (JWT)
+    - from:
+        - source:
+            notRequestPrincipals: ["*"]
+      to:
+        - operation:
+            # Exclude Knative health check and metrics paths
+            notPaths:
+              - "/healthz"
+              - "/ready"
+              - "/wait-for-drain"
+              - "/metrics"
+              - "/stats/prometheus"
+              - "*/healthz"
+              - "*/ready"

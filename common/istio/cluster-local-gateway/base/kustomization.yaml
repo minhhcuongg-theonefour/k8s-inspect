@@ -4,10 +4,10 @@ kind: Kustomization
 namespace: istio-system
 
 resources:
-- cluster-local-gateway.yaml
-- gateway-authorizationpolicy.yaml
-- gateway.yaml
+  - cluster-local-gateway.yaml
+  - gateway-authorizationpolicy.yaml
+  - gateway.yaml
 
 patches:
-- path: patches/remove-pdb.yaml
-- path: patches/seccomp-cluster-local-gateway.yaml
+  - path: patches/remove-pdb.yaml
+  - path: patches/seccomp-cluster-local-gateway.yaml

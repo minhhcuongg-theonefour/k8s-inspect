@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # This script helps to create a PR to update the unified Istio manifests
 
-SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 source "${SCRIPT_DIRECTORY}/library.sh"
 
 setup_error_handling
 
 COMPONENT_NAME="istio"
-COMMIT="1.27.0"  # Update this for new versions
+COMMIT="1.27.0" # Update this for new versions
 SOURCE_DIRECTORY=${SOURCE_DIRECTORY:=/tmp/${COMPONENT_NAME}}
 BRANCH_NAME=${BRANCH_NAME:=${COMPONENT_NAME}-${COMMIT?}}
 
@@ -21,8 +21,8 @@ echo "Checking out in $SOURCE_DIRECTORY to $COMMIT..."
 mkdir -p $SOURCE_DIRECTORY
 cd $SOURCE_DIRECTORY
 if [ ! -d "istio-${COMMIT}" ]; then
-    wget "https://github.com/istio/istio/releases/download/${COMMIT}/istio-${COMMIT}-linux-amd64.tar.gz"
-    tar xvfz istio-${COMMIT}-linux-amd64.tar.gz
+  wget "https://github.com/istio/istio/releases/download/${COMMIT}/istio-${COMMIT}-linux-amd64.tar.gz"
+  tar xvfz istio-${COMMIT}-linux-amd64.tar.gz
 fi
 
 ISTIOCTL=$SOURCE_DIRECTORY/istio-${COMMIT}/bin/istioctl

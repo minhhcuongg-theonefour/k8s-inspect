@@ -1,8 +1,8 @@
 name: Unit Test
 
 on:
-- push
-- pull_request
+  - push
+  - pull_request
 
 permissions:
   contents: read
@@ -15,12 +15,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out repo
-      uses: actions/checkout@v4
+      - name: Check out repo
+        uses: actions/checkout@v4
 
-    - name: Install kustomize
-      run: ./tests/kustomize_install.sh
+      - name: Install kustomize
+        run: ./tests/kustomize_install.sh
 
-    - name: Unit Test
-      run: |
-        kustomize build example
+      - name: Unit Test
+        run: |
+          kustomize build example

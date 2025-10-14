@@ -5,9 +5,9 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - name: dex
-    port: 5556
-    protocol: TCP
-    targetPort: 5556
+    - name: dex
+      port: 5556
+      protocol: TCP
+      targetPort: 5556
   selector:
     app: dex

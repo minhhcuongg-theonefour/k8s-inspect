@@ -7,7 +7,6 @@ kubectl get service jobset-webhook-service -n kubeflow-system
 kubectl get mutatingwebhookconfiguration jobset-mutating-webhook-configuration
 kubectl get validatingwebhookconfiguration jobset-validating-webhook-configuration
 
-
 kubectl wait --for=condition=Available deployment/jobset-controller-manager -n kubeflow-system --timeout=120s
 kubectl wait --for=condition=Ready pod -l control-plane=controller-manager -n kubeflow-system --timeout=60s
 

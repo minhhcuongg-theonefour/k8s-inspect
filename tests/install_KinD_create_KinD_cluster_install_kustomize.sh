@@ -2,8 +2,8 @@
 set -e
 
 error_exit() {
-    echo "Error occurred in script at line: ${1}."
-    exit 1
+  echo "Error occurred in script at line: ${1}."
+  exit 1
 }
 
 trap 'error_exit $LINENO' ERR
@@ -14,17 +14,19 @@ sudo swapoff -a
 # This conditional helps running GH Workflows through
 # [act](https://github.com/nektos/act)
 if [ -e /swapfile ]; then
-    sudo rm -f /swapfile
-    sudo mkdir -p /tmp/etcd
-    sudo mount -t tmpfs tmpfs /tmp/etcd
+  sudo rm -f /swapfile
+  sudo mkdir -p /tmp/etcd
+  sudo mount -t tmpfs tmpfs /tmp/etcd
 fi
 
 {
-    curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64
-    chmod +x ./kind
-    sudo mv kind /usr/local/bin
-} || { echo "Failed to install KinD"; exit 1; }
-
+  curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.29.0/kind-linux-amd64
+  chmod +x ./kind
+  sudo mv kind /usr/local/bin
+} || {
+  echo "Failed to install KinD"
+  exit 1
+}
 
 echo "Creating KinD cluster ..."
 echo "
@@ -60,8 +62,11 @@ kubectl cluster-info
 
 echo "Install Kustomize ..."
 {
-    curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.3/kustomize_v5.4.3_linux_amd64.tar.gz"
-    tar -xzvf kustomize_v5.4.3_linux_amd64.tar.gz
-    chmod a+x kustomize
-    sudo mv kustomize /usr/local/bin/kustomize
-} || { echo "Failed to install Kustomize"; exit 1; }
+  curl --silent --location --remote-name "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.3/kustomize_v5.4.3_linux_amd64.tar.gz"
+  tar -xzvf kustomize_v5.4.3_linux_amd64.tar.gz
+  chmod a+x kustomize
+  sudo mv kustomize /usr/local/bin/kustomize
+} || {
+  echo "Failed to install Kustomize"
+  exit 1
+}

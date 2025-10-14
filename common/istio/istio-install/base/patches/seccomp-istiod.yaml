@@ -10,7 +10,7 @@ spec:
   template:
     spec:
       containers:
-      - name: discovery
-        securityContext:
-          seccompProfile:
-            type: RuntimeDefault
+        - name: discovery
+          securityContext:
+            seccompProfile:
+              type: RuntimeDefault

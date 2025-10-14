@@ -78,7 +78,7 @@ curl --fail --show-error -X DELETE \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN"
 
-sleep 2  
+sleep 2
 if kubectl get pvc test-pvc -n $KF_PROFILE > /dev/null 2>&1; then
   echo "ERROR: PVC 'test-pvc' still exists after deletion"
   exit 1
@@ -89,7 +89,7 @@ curl --fail --show-error -X DELETE \
   -H "Authorization: Bearer ${TOKEN}" \
   -H "X-XSRF-TOKEN: $XSRFTOKEN" -H "Cookie: XSRF-TOKEN=$XSRFTOKEN"
 
-sleep 2  
+sleep 2
 if kubectl get pvc api-created-pvc -n $KF_PROFILE > /dev/null 2>&1; then
   echo "ERROR: PVC 'api-created-pvc' still exists after deletion"
   exit 1

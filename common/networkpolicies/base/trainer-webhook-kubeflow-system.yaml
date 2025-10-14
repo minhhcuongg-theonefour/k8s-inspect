@@ -8,8 +8,8 @@ spec:
     matchLabels:
       service.istio.io/canonical-name: trainer
   ingress:
-  - ports:
-    - protocol: TCP
-      port: 9443
+    - ports:
+        - protocol: TCP
+          port: 9443
   policyTypes:
-  - Ingress
+    - Ingress

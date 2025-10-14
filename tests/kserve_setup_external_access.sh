@@ -12,7 +12,7 @@ echo "Service: $SERVICE_NAME"
 echo
 
 # Create VirtualService for external access
-cat <<EOF | kubectl apply -f -
+cat << EOF | kubectl apply -f -
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:

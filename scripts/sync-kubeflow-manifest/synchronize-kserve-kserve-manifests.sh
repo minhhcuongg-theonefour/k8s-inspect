@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # This script helps to create a PR to update the KServe manifests
 
-SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 source "${SCRIPT_DIRECTORY}/library.sh"
 
 setup_error_handling
@@ -31,10 +31,9 @@ clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY"
 echo "Copying kserve manifests..."
 DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/$DESTINATION_MANIFESTS_PATH
 if [ -d "$DESTINATION_DIRECTORY" ]; then
-    rm -rf "$DESTINATION_DIRECTORY"/kserve*
+  rm -rf "$DESTINATION_DIRECTORY"/kserve*
 fi
 cp $SOURCE_DIRECTORY/$REPOSITORY_DIRECTORY/$SOURCE_MANIFESTS_PATH/* $DESTINATION_DIRECTORY -r
-
 
 update_readme "$MANIFESTS_DIRECTORY" "$SOURCE_TEXT" "$DESTINATION_TEXT"
 

@@ -11,7 +11,7 @@ echo "Waiting for metrics API to become available..."
 max_retries=10
 retry_interval=10
 for i in $(seq 1 $max_retries); do
-  if kubectl get --raw "/apis/metrics.k8s.io/v1beta1/nodes" >/dev/null 2>&1; then
+  if kubectl get --raw "/apis/metrics.k8s.io/v1beta1/nodes" > /dev/null 2>&1; then
     echo "Metrics API is available"
     break
   fi

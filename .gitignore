@@ -23,3 +23,14 @@
 
 # Scanning reports of trivy
 image_lists/*
+
+# Node modules and package manager files
+node_modules/
+package-lock.json
+yarn.lock
+
+# Prettier cache
+.prettier-cache/
+
+# Pre-commit cache
+.pre-commit-cache/

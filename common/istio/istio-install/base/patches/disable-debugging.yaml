@@ -12,7 +12,7 @@ spec:
   template:
     spec:
       containers:
-      - name: discovery
-        env:
-        - name: ENABLE_DEBUG_ON_HTTP
-          value: 'false'
+        - name: discovery
+          env:
+            - name: ENABLE_DEBUG_ON_HTTP
+              value: "false"

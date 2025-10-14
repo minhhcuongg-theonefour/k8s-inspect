@@ -1,0 +1,20 @@
+# Prettier configuration for YAML formatting
+tabWidth: 2
+useTabs: false
+printWidth: 120
+proseWrap: preserve
+bracketSpacing: true
+singleQuote: false
+trailingComma: none
+
+# YAML specific settings
+overrides:
+  - files: "*.yaml"
+    options:
+      printWidth: 120
+      tabWidth: 2
+  - files: "*.yml"
+    options:
+      printWidth: 120
+      tabWidth: 2
+
