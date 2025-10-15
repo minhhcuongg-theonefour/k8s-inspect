@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
     targetRevision: main
-    path: bootstrap/apps/kubeflow/common-services.yaml
+    path: bootstrap/apps
     # This tells ArgoCD to use kustomize to build the manifests
     # The kustomization.yaml will inject centralized config values
   destination:

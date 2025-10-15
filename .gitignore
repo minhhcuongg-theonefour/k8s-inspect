@@ -17,7 +17,10 @@
 # /Makefile
 
 # Environment files
-/env.*
+**/env/
+
+# Umbrella chart temp files
+**/umbrella_chart/
 
 # Helm charts
 **/.helm/
