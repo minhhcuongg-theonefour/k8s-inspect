@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euxo
 
-REPOSITORY_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo "${GITHUB_WORKSPACE:-$(pwd)}")
+REPOSITORY_ROOT=$(git rev-parse --show-toplevel 2> /dev/null || echo "${GITHUB_WORKSPACE:-$(pwd)}")
 cd "${REPOSITORY_ROOT}"
 
 # Install Spark operator

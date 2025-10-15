@@ -1,0 +1,17 @@
+# Ignore upstream directories
+**/upstream/**
+
+# Ignore application directories
+applications/**
+
+# Ignore node_modules
+node_modules/
+
+# Ignore charts
+**/charts/
+
+# Ignore specific large generated files
+common/istio/cluster-local-gateway/base/cluster-local-gateway.yaml
+common/istio/istio-crds/base/crd.yaml
+common/istio/istio-install/base/install.yaml
+

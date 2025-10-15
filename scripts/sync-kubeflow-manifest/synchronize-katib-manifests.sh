@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # This script helps to create a PR to update the Katib manifests
 
-SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 source "${SCRIPT_DIRECTORY}/library.sh"
 
 setup_error_handling

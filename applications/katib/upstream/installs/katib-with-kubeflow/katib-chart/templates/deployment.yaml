@@ -1,0 +1,250 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "katib-chart.fullname" . }}-controller
+  labels:
+    katib.kubeflow.org/component: controller
+  {{- include "katib-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.controller.replicas }}
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: controller
+    {{- include "katib-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        katib.kubeflow.org/component: controller
+        sidecar.istio.io/inject: "false"
+      {{- include "katib-chart.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - args: {{- toYaml .Values.controller.katibController.args | nindent 8 }}
+        command:
+        - ./katib-controller
+        env:
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.controller.katibController.image.repository }}:{{ .Values.controller.katibController.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: healthz
+        name: katib-controller
+        ports:
+        - containerPort: 8443
+          name: webhook
+          protocol: TCP
+        - containerPort: 8080
+          name: metrics
+          protocol: TCP
+        - containerPort: 18080
+          name: healthz
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: healthz
+        resources: {}
+        securityContext: {{- toYaml .Values.controller.katibController.containerSecurityContext
+          | nindent 10 }}
+        volumeMounts:
+        - mountPath: /tmp/cert
+          name: cert
+          readOnly: true
+        - mountPath: /katib-config.yaml
+          name: katib-config
+          readOnly: true
+          subPath: katib-config.yaml
+      serviceAccountName: {{ include "katib-chart.fullname" . }}-controller
+      volumes:
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: {{ include "katib-chart.fullname" . }}-webhook-cert
+      - configMap:
+          name: {{ include "katib-chart.fullname" . }}-config
+        name: katib-config
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "katib-chart.fullname" . }}-db-manager
+  labels:
+    katib.kubeflow.org/component: db-manager
+  {{- include "katib-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.dbManager.replicas }}
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: db-manager
+    {{- include "katib-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        katib.kubeflow.org/component: db-manager
+        sidecar.istio.io/inject: "false"
+      {{- include "katib-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - command:
+        - ./katib-db-manager
+        env:
+        - name: DB_NAME
+          value: {{ quote .Values.dbManager.katibDbManager.env.dbName }}
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_ROOT_PASSWORD
+              name: {{ include "katib-chart.fullname" . }}-mysql-secrets
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.dbManager.katibDbManager.image.repository }}:{{ .Values.dbManager.katibDbManager.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          failureThreshold: 5
+          grpc:
+            port: 6789
+            service: null
+          initialDelaySeconds: 10
+          periodSeconds: 60
+        name: katib-db-manager
+        ports:
+        - containerPort: 6789
+          name: api
+        resources: {}
+        securityContext: {{- toYaml .Values.dbManager.katibDbManager.containerSecurityContext
+          | nindent 10 }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "katib-chart.fullname" . }}-mysql
+  labels:
+    katib.kubeflow.org/component: mysql
+  {{- include "katib-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.mysql.replicas }}
+  strategy:
+    type: {{ .Values.mysql.strategy.type | quote }}
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: mysql
+    {{- include "katib-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        katib.kubeflow.org/component: mysql
+        sidecar.istio.io/inject: "false"
+      {{- include "katib-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.mysql.katibMysql.args | nindent 8 }}
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MYSQL_ROOT_PASSWORD
+              name: {{ include "katib-chart.fullname" . }}-mysql-secrets
+        - name: MYSQL_ALLOW_EMPTY_PASSWORD
+          value: {{ quote .Values.mysql.katibMysql.env.mysqlAllowEmptyPassword }}
+        - name: MYSQL_DATABASE
+          value: {{ quote .Values.mysql.katibMysql.env.mysqlDatabase }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.mysql.katibMysql.image.repository }}:{{ .Values.mysql.katibMysql.image.tag
+          | default .Chart.AppVersion }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}
+          failureThreshold: 10
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        name: katib-mysql
+        ports:
+        - containerPort: 3306
+          name: dbapi
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysql -D ${MYSQL_DATABASE} -u root -p${MYSQL_ROOT_PASSWORD} -e 'SELECT 1'
+          failureThreshold: 10
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources: {}
+        securityContext: {{- toYaml .Values.mysql.katibMysql.containerSecurityContext |
+          nindent 10 }}
+        startupProbe:
+          exec:
+            command:
+            - /bin/bash
+            - -c
+            - mysqladmin ping -u root -p${MYSQL_ROOT_PASSWORD}
+          failureThreshold: 60
+          periodSeconds: 15
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: katib-mysql
+      securityContext: {{- toYaml .Values.mysql.podSecurityContext | nindent 8 }}
+      volumes:
+      - name: katib-mysql
+        persistentVolumeClaim:
+          claimName: {{ include "katib-chart.fullname" . }}-mysql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "katib-chart.fullname" . }}-ui
+  labels:
+    katib.kubeflow.org/component: ui
+  {{- include "katib-chart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.ui.replicas }}
+  selector:
+    matchLabels:
+      katib.kubeflow.org/component: ui
+    {{- include "katib-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        katib.kubeflow.org/component: ui
+        sidecar.istio.io/inject: "true"
+      {{- include "katib-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - args: {{- toYaml .Values.ui.katibUi.args | nindent 8 }}
+        command:
+        - ./katib-ui
+        env:
+        - name: KATIB_CORE_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: APP_DISABLE_AUTH
+          value: {{ quote .Values.ui.katibUi.env.appDisableAuth }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.ui.katibUi.image.repository }}:{{ .Values.ui.katibUi.image.tag
+          | default .Chart.AppVersion }}
+        name: katib-ui
+        ports:
+        - containerPort: 8080
+          name: ui
+        resources: {}
+        securityContext: {{- toYaml .Values.ui.katibUi.containerSecurityContext | nindent
+          10 }}
+      securityContext: {{- toYaml .Values.ui.podSecurityContext | nindent 8 }}
+      serviceAccountName: {{ include "katib-chart.fullname" . }}-ui

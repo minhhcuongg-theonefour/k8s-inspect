@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "katib-chart.fullname" . }}-webhook-cert
+  labels:
+  {{- include "katib-chart.labels" . | nindent 4 }}
+spec:
+  commonName: katib-controller.kubeflow.svc
+  dnsNames:
+  - '{{ include "katib-chart.fullname" . }}-controller.{{ .Release.Namespace }}.svc'
+  - '{{ include "katib-chart.fullname" . }}-controller.{{ .Release.Namespace }}.svc.{{
+    .Values.kubernetesClusterDomain }}'
+  isCA: true
+  issuerRef:
+    kind: Issuer
+    name: '{{ include "katib-chart.fullname" . }}-selfsigned-issuer'
+  secretName: katib-webhook-cert

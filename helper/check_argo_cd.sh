@@ -11,7 +11,7 @@ CHART_NAME="argo-cd"
 echo "🔍 Checking if Argo CD is already installed in namespace '$NAMESPACE'..."
 
 # Check if namespace exists
-if kubectl get ns "$NAMESPACE" >/dev/null 2>&1; then
+if kubectl get ns "$NAMESPACE" > /dev/null 2>&1; then
   echo "Namespace '$NAMESPACE' already exists."
 else
   echo "Creating namespace '$NAMESPACE'..."
@@ -19,7 +19,7 @@ else
 fi
 
 # Check if Helm release exists
-if helm status "$RELEASE_NAME" -n "$NAMESPACE" >/dev/null 2>&1; then
+if helm status "$RELEASE_NAME" -n "$NAMESPACE" > /dev/null 2>&1; then
   echo "Argo CD Helm release '$RELEASE_NAME' already installed in '$NAMESPACE'."
 else
   echo "Installing Argo CD via Helm..."
@@ -36,8 +36,6 @@ else
     "$HELM_REPO_NAME"/"$CHART_NAME" \
     -n "$NAMESPACE" \
     --create-namespace
-
-
 
   echo "✅ Argo CD installed successfully!"
 fi

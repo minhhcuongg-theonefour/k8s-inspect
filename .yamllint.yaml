@@ -12,10 +12,15 @@ rules:
   document-end:
     present: false
   indentation:
-    indent-sequences: false
+    spaces: 2
+    indent-sequences: consistent
+    check-multi-line-strings: false
   line-length:
     max: 400
   truthy:
-    allowed-values: ['on', 'off', 'true', 'false']
-  empty-lines: 
+    allowed-values: ["on", "off", "true", "false"]
+  empty-lines:
     level: warning
+  comments:
+    min-spaces-from-content: 1  # More lenient than default 2
+  comments-indentation: disable  # Prettier handles this

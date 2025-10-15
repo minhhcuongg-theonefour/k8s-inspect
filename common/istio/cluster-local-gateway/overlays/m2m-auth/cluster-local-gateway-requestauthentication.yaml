@@ -9,23 +9,23 @@ spec:
       app: cluster-local-gateway
       istio: cluster-local-gateway
   jwtRules:
-  # Rule for Kubernetes service account tokens
-  - issuer: "https://kubernetes.default.svc.cluster.local"
-    jwksUri: "http://cluster-jwks-proxy.istio-system.svc.cluster.local/openid/v1/jwks"
-    forwardOriginalToken: true
-    outputClaimToHeaders:
-    - header: kubeflow-userid
-      claim: sub
-    fromHeaders:
-    - name: Authorization
-      prefix: "Bearer "
-  # Alternative issuer for some Kubernetes setups
-  - issuer: "https://kubernetes.default.svc"
-    jwksUri: "http://cluster-jwks-proxy.istio-system.svc.cluster.local/openid/v1/jwks"
-    forwardOriginalToken: true
-    outputClaimToHeaders:
-    - header: kubeflow-userid
-      claim: sub
-    fromHeaders:
-    - name: Authorization
-      prefix: "Bearer "
+    # Rule for Kubernetes service account tokens
+    - issuer: "https://kubernetes.default.svc.cluster.local"
+      jwksUri: "http://cluster-jwks-proxy.istio-system.svc.cluster.local/openid/v1/jwks"
+      forwardOriginalToken: true
+      outputClaimToHeaders:
+        - header: kubeflow-userid
+          claim: sub
+      fromHeaders:
+        - name: Authorization
+          prefix: "Bearer "
+    # Alternative issuer for some Kubernetes setups
+    - issuer: "https://kubernetes.default.svc"
+      jwksUri: "http://cluster-jwks-proxy.istio-system.svc.cluster.local/openid/v1/jwks"
+      forwardOriginalToken: true
+      outputClaimToHeaders:
+        - header: kubeflow-userid
+          claim: sub
+      fromHeaders:
+        - name: Authorization
+          prefix: "Bearer "

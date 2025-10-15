@@ -2,11 +2,11 @@
 set -euo pipefail
 
 set +e
-for ((i=1; i<=3; i++)); do
-    if kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -; then
-        break
-    fi
-    kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=60s --field-selector=status.phase!=Succeeded
+for ((i = 1; i <= 3; i++)); do
+  if kustomize build common/knative/knative-serving/overlays/gateways | kubectl apply -f -; then
+    break
+  fi
+  kubectl wait --for=condition=Ready pods --all --all-namespaces --timeout=60s --field-selector=status.phase!=Succeeded
 done
 set -e
 

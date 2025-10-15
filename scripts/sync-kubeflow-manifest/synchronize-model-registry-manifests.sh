@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # This script helps to create a PR to update the Model Registry manifests
 
-SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 source "${SCRIPT_DIRECTORY}/library.sh"
 
 setup_error_handling
@@ -31,7 +31,7 @@ clone_and_checkout "$SOURCE_DIRECTORY" "$REPOSITORY_URL" "$REPOSITORY_DIRECTORY"
 echo "Copying ${COMPONENT_NAME} manifests..."
 DESTINATION_DIRECTORY=$MANIFESTS_DIRECTORY/$DESTINATION_MANIFESTS_PATH
 if [ -d "$DESTINATION_DIRECTORY" ]; then
-    rm -r "$DESTINATION_DIRECTORY"
+  rm -r "$DESTINATION_DIRECTORY"
 fi
 mkdir -p $DESTINATION_DIRECTORY
 cp -r "$SOURCE_DIRECTORY/$REPOSITORY_DIRECTORY/$SOURCE_MANIFESTS_PATH/"* "$DESTINATION_DIRECTORY"

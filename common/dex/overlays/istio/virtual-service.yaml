@@ -4,15 +4,15 @@ metadata:
   name: dex
 spec:
   gateways:
-  - kubeflow/kubeflow-gateway
+    - kubeflow/kubeflow-gateway
   hosts:
-  - '*'
+    - "*"
   http:
-  - match:
-    - uri:
-        prefix: /dex/
-    route:
-    - destination:
-        host: DEX_SERVICE.DEX_NAMESPACE.svc.cluster.local
-        port:
-          number: 5556
+    - match:
+        - uri:
+            prefix: /dex/
+      route:
+        - destination:
+            host: DEX_SERVICE.DEX_NAMESPACE.svc.cluster.local
+            port:
+              number: 5556

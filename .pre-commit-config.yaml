@@ -1,22 +1,66 @@
 repos:
-  - repo: https://github.com/psf/black
-    rev: 24.2.0
+  # Basic file cleanup hooks
+  # These run first to ensure consistent file formatting across the codebase
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
     hooks:
+      # Removes trailing whitespace from all lines
+      # AUTO-FIX: Yes
+      - id: trailing-whitespace
+        files: ^(common|example|hack|tests|\.github)/.*\.(ya?ml|py|sh)$
+        exclude: .*upstream.*
+
+      # Ensures files end with a single newline character
+      # AUTO-FIX: Yes
+      - id: end-of-file-fixer
+        files: ^(common|example|hack|tests|\.github)/.*\.(ya?ml|py|sh)$
+        exclude: .*upstream.*
+
+  # Python code formatter
+  # Automatically formats Python code to follow consistent style guidelines
+  - repo: https://github.com/psf/black
+    rev: 25.9.0
+    hooks:
+      # Black: The uncompromising Python code formatter
+      # AUTO-FIX: Yes - reformats Python code automatically
       - id: black
         files: ^(common|example)/.*\.py$
         exclude: .*upstream.*
 
-  - repo: https://github.com/adrienverge/yamllint
-    rev: v1.35.1
+  # YAML formatter
+  # Prettier formats YAML files with consistent indentation and style
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0-alpha.8
     hooks:
+      # Prettier: Auto-formats YAML files (indentation, spacing, line width)
+      # AUTO-FIX: Yes - fixes YAML indentation and formatting issues
+      # This runs BEFORE yamllint so files are properly formatted before validation
+      - id: prettier
+        files: ^(common|example|hack|tests|\.github)/.*\.ya?ml$
+        exclude: .*upstream.*
+        args: [--write, --tab-width=2, --print-width=120]
+
+  # YAML linter
+  # Validates YAML syntax and style after Prettier has formatted the files
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.37.1
+    hooks:
+      # Yamllint: Validates YAML files for syntax and style issues
+      # AUTO-FIX: No - only reports issues (Prettier handles the fixing)
+      # Configuration: Uses .yamllint.yaml for rules
       - id: yamllint
         files: ^(common|example|hack|tests|\.github)/.*\.ya?ml$
         exclude: .*upstream.*
         args: [--config-file=.yamllint.yaml]
 
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.6
-    hooks:
-      - id: shellcheck
-        files: ^.*\.sh$
-        exclude: (^applications/.*|.*upstream.*)
+  # Shell script linter
+  # Checks shell scripts for common errors and best practices
+  # - repo: https://github.com/shellcheck-py/shellcheck-py
+  #   rev: v0.11.0.1
+  #   hooks:
+  #     # Shellcheck: Static analysis tool for shell scripts
+  #     # AUTO-FIX: No - only reports issues, must be fixed manually
+  #     # Finds bugs, style issues, and suggests improvements in bash/sh scripts
+  #     - id: shellcheck
+  #       files: ^.*\.sh$
+  #       exclude: (^applications/.*|.*upstream.*)

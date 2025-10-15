@@ -68,17 +68,17 @@ def main():
     parser.add_argument('--bucket', required=True, help='S3 bucket name')
     parser.add_argument('--key', required=True, help='S3 object key')
     parser.add_argument('--content', help='Content to upload (for upload operation)')
-    
+
     args = parser.parse_args()
-    
+
     if args.operation == 'upload':
         if not args.content:
             print("Error: --content is required for upload operation")
             sys.exit(1)
-        success = upload_file(args.access_key, args.secret_key, args.endpoint_url, 
+        success = upload_file(args.access_key, args.secret_key, args.endpoint_url,
                              args.bucket, args.key, args.content)
         sys.exit(0 if success else 1)
-    
+
     elif args.operation == 'download':
         success, content = download_file(args.access_key, args.secret_key, args.endpoint_url,
                                         args.bucket, args.key)

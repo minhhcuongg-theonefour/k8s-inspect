@@ -12,4 +12,4 @@ spec:
       app: istio-ingressgateway
       istio: ingressgateway
   rules:
-  - {}
+    - {}

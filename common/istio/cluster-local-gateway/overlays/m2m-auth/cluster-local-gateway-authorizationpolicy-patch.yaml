@@ -11,18 +11,18 @@ spec:
       app: cluster-local-gateway
       istio: cluster-local-gateway
   rules:
-  # Allow requests with valid JWT principals
-  - from:
-    - source:
-        requestPrincipals: ["*"]
-  # Allow health check and metrics endpoints without authentication
-  - to:
-    - operation:
-        paths:
-        - "/healthz"
-        - "/ready"
-        - "/wait-for-drain"
-        - "/metrics"
-        - "/stats/prometheus"
-        - "*/healthz"
-        - "*/ready"
+    # Allow requests with valid JWT principals
+    - from:
+        - source:
+            requestPrincipals: ["*"]
+    # Allow health check and metrics endpoints without authentication
+    - to:
+        - operation:
+            paths:
+              - "/healthz"
+              - "/ready"
+              - "/wait-for-drain"
+              - "/metrics"
+              - "/stats/prometheus"
+              - "*/healthz"
+              - "*/ready"

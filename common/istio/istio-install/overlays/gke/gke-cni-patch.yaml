@@ -11,6 +11,6 @@ spec:
   template:
     spec:
       volumes:
-      - hostPath:
-          path: /home/kubernetes/bin
-        name: cni-bin-dir
+        - hostPath:
+            path: /home/kubernetes/bin
+          name: cni-bin-dir

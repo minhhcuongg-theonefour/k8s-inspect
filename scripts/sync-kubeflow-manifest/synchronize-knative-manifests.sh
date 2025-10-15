@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # This script helps to create a PR to update the Knative manifests
 
-SCRIPT_DIRECTORY=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+SCRIPT_DIRECTORY=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 source "${SCRIPT_DIRECTORY}/library.sh"
 
 setup_error_handling
 
 COMPONENT_NAME="knative"
-KN_SERVING_RELEASE="v1.16.2" # Must be a release
+KN_SERVING_RELEASE="v1.16.2"   # Must be a release
 KN_EXTENSION_RELEASE="v1.16.0" # Must be a release
-KN_EVENTING_RELEASE="v1.16.4" # Must be a release
+KN_EVENTING_RELEASE="v1.16.4"  # Must be a release
 BRANCH_NAME=${BRANCH_NAME:=synchronize-${COMPONENT_NAME}-manifests-${KN_SERVING_RELEASE?}}
 
 # Path configurations
@@ -22,10 +22,10 @@ check_uncommitted_changes
 
 # Clean up existing files (keep README and OWNERS)
 if [ -d "$DESTINATION_DIRECTORY" ]; then
-    rm -r "$DESTINATION_DIRECTORY/knative-serving/base/upstream"
-    rm "$DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml"
-    rm -r "$DESTINATION_DIRECTORY/knative-eventing/base/upstream"
-    rm "$DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml"
+  rm -r "$DESTINATION_DIRECTORY/knative-serving/base/upstream"
+  rm "$DESTINATION_DIRECTORY/knative-serving-post-install-jobs/base/serving-post-install-jobs.yaml"
+  rm -r "$DESTINATION_DIRECTORY/knative-eventing/base/upstream"
+  rm "$DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml"
 fi
 
 # Create required directories
@@ -67,8 +67,8 @@ yq eval -i 'explode(.)' $DESTINATION_DIRECTORY/knative-eventing-post-install-job
 
 yq eval -i 'select(.kind == "Job" and .metadata.generateName == "storage-version-migration-eventing-") | .metadata.name = "storage-version-migration-eventing"' $DESTINATION_DIRECTORY/knative-eventing-post-install-jobs/base/eventing-post-install.yaml
 
-yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-observability") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml 
-yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-tracing") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml 
+yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-observability") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
+yq eval -i 'select((.kind == "ConfigMap" and .metadata.name == "config-tracing") | not)' $DESTINATION_DIRECTORY/knative-eventing/base/upstream/in-memory-channel.yaml
 
 # Helper function to replace text in files
 replace_in_file() {

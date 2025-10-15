@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 NAMESPACE=${1:-kubeflow-user-example-com}
-SCRIPT_DIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPT_DIRECTORY="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEST_DIRECTORY="${SCRIPT_DIRECTORY}/kserve"
 
 if ! command -v pytest &> /dev/null; then
@@ -20,7 +20,7 @@ export KSERVE_M2M_TOKEN="$(kubectl -n ${NAMESPACE} create token default-editor)"
 
 # Try to deploy test InferenceService (may fail if KServe webhooks not ready)
 set +e
-if cat <<EOF | kubectl apply -f -
+if cat << EOF | kubectl apply -f -; then
 apiVersion: "serving.kserve.io/v1beta1"
 kind: "InferenceService"
 metadata:
@@ -38,12 +38,11 @@ spec:
           cpu: 100m
           memory: 256Mi
 EOF
-then
   echo "InferenceService created successfully, waiting for it to be ready..."
   kubectl wait --for=condition=Ready inferenceservice/test-sklearn-secure -n ${NAMESPACE} --timeout=180s || echo "InferenceService not ready, continuing with JWT tests..."
-  
+
   # Create AuthorizationPolicy to allow authenticated access
-  cat <<EOF | kubectl apply -f -
+  cat << EOF | kubectl apply -f -
 apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
@@ -108,7 +107,6 @@ fi
 
 # Clean up
 kubectl delete namespace attacker-namespace --ignore-not-found=true
-
 
 # Run existing pytest tests if available
 if command -v pytest &> /dev/null && [ -d "${TEST_DIRECTORY}" ]; then

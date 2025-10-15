@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 if kubectl get cm -n auth dex -o yaml | grep -q "redirectURIs.*http://authservice"; then
-  kubectl apply -f - <<EOF
+  kubectl apply -f - << EOF
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -53,7 +53,7 @@ if ! kubectl get deploy -n auth dex -o yaml | grep -q "OIDC_CLIENT_ID"; then
   kubectl create secret generic dex-secret -n auth \
     --from-literal=DEX_USER_PASSWORD=$(python3 -c 'from passlib.hash import bcrypt; print(bcrypt.using(rounds=12, ident="2y").hash("12341234"))') \
     --dry-run=client -o yaml | kubectl apply -f -
-    
+
   kubectl create secret generic oidc-client-secret -n auth \
     --from-literal=OIDC_CLIENT_ID=kubeflow-oidc-authservice \
     --from-literal=OIDC_CLIENT_SECRET=pUBnBOY80SnXgjibTYM9ZWNzY2xreNGQok \
@@ -62,14 +62,14 @@ if ! kubectl get deploy -n auth dex -o yaml | grep -q "OIDC_CLIENT_ID"; then
   ./tests/dex_install.sh
 fi
 
-if kubectl get deployment -n oauth2-proxy oauth2-proxy &>/dev/null; then
+if kubectl get deployment -n oauth2-proxy oauth2-proxy &> /dev/null; then
   kubectl rollout restart deployment -n oauth2-proxy oauth2-proxy
 fi
 
 RETRY_COUNT=0
 MAX_RETRIES=3
-until curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/dex/health 2>/dev/null | grep -q "200\|302\|404"; do
-  RETRY_COUNT=$((RETRY_COUNT+1))
+until curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/dex/health 2> /dev/null | grep -q "200\|302\|404"; do
+  RETRY_COUNT=$((RETRY_COUNT + 1))
   if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
     echo "Error: Dex health endpoint not available after $MAX_RETRIES attempts"
     exit 1
