@@ -9,8 +9,8 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/refactor-synchronize-script
-    path: bootstrap/apps/kubeflow
+    targetRevision: main
+    path: bootstrap/apps/kubeflow/common-services.yaml
     # This tells ArgoCD to use kustomize to build the manifests
     # The kustomization.yaml will inject centralized config values
   destination:
@@ -28,5 +28,3 @@ spec:
         duration: 5s
         factor: 2
         maxDuration: 3m
-
-

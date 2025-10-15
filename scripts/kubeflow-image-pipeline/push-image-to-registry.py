@@ -135,10 +135,10 @@ def push_images_to_harbor():
             logger.warning(f"Skipping digest-based image (cannot retag): {src_img}")
             continue
 
-        # 🧩 lấy phần repo và tag chính xác
+        # 🧩 get repo and tag
         parts = src_img.split("/")
         if len(parts) > 2:
-            # bỏ prefix như docker.io, ghcr.io,...
+            # remove prefix like docker.io, ghcr.io,...
             repo_path = "/".join(parts[1:])
         else:
             repo_path = "/".join(parts)

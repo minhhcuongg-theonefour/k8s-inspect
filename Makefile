@@ -36,4 +36,15 @@ login-registry:
 list-repos-harbor:
 	@harbor project repos $(registry_name)
 
-.PHONY: cluster-list cluster-create cluster-deleteg6DybbxZlRIicyGv
+k8s-login-registry:
+	kubectl create secret docker-registry harbor-regcred \
+	  --docker-server=$(registry_url) \
+	  --docker-username=$(registry_user) \
+	  --docker-password=$(registry_password)
+
+k8s-patch-secret:
+	@kubectl patch serviceaccount default \
+		-p '{"imagePullSecrets": [{"name": "harbor-regcred"}]}' \
+		-n default
+
+.PHONY: cluster-list cluster-create cluster-delete k8s-login-registry

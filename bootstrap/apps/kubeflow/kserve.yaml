@@ -6,12 +6,12 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "3"
   finalizers:
-  - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
-    targetRevision: feat/sync-wave
+    targetRevision: main
     path: applications/kserve/kserve
   destination:
     server: https://kubernetes.default.svc
@@ -21,9 +21,9 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
-    - ServerSideApply=true
-    - Force=true
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - Force=true
     retry:
       limit: 5
       backoff:
@@ -31,11 +31,11 @@ spec:
         factor: 2
         maxDuration: 3m
   ignoreDifferences:
-  - group: admissionregistration.k8s.io
-    kind: ValidatingAdmissionWebhook
-    jsonPointers:
-    - /webhooks/0/clientConfig/caBundle
-  - group: admissionregistration.k8s.io
-    kind: MutatingAdmissionWebhook
-    jsonPointers:
-    - /webhooks/0/clientConfig/caBundle
+    - group: admissionregistration.k8s.io
+      kind: ValidatingAdmissionWebhook
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle
+    - group: admissionregistration.k8s.io
+      kind: MutatingAdmissionWebhook
+      jsonPointers:
+        - /webhooks/0/clientConfig/caBundle

@@ -4,16 +4,16 @@ metadata:
   name: argocd-bootstrap
   namespace: argocd
   finalizers:
-  - resources-finalizer.argocd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/sync-wave
+    targetRevision: main
     path: bootstrap/apps
     directory:
       recurse: true
-      exclude: 'argocd/*,apps/kustomization.yaml'
+      exclude: "argocd/*,apps/kustomization.yaml"
   destination:
     name: in-cluster
     namespace: argocd
@@ -22,4 +22,4 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
+      - CreateNamespace=true

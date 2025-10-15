@@ -9,23 +9,23 @@ spec:
     name: in-cluster
     namespace: gpu-operator
   sources:
-  - repoURL: https://helm.ngc.nvidia.com/nvidia
-    targetRevision: v25.3.4
-    chart: gpu-operator
-    helm:
-      releaseName: nvidia
-  - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/sync-wave
-    ref: values
+    - repoURL: https://helm.ngc.nvidia.com/nvidia
+      targetRevision: v25.3.4
+      chart: gpu-operator
+      helm:
+        releaseName: nvidia
+    - repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
+      targetRevision: main
+      ref: values
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-    - CreateNamespace=true
-    - ApplyOutOfSyncOnly=true
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
   ignoreDifferences:
-  - group: argoproj.io
-    kind: Application
-    jsonPointers:
-    - /status
+    - group: argoproj.io
+      kind: Application
+      jsonPointers:
+        - /status

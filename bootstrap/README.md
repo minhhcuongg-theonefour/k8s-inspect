@@ -271,7 +271,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/sync-wave
+    targetRevision: main
     path: applications/profiles/pss
   destination:
     server: https://kubernetes.default.svc
@@ -308,7 +308,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/sync-wave
+    targetRevision: main
     path: applications/admission-webhook/upstream/overlays/cert-manager
   destination:
     server: https://kubernetes.default.svc
@@ -345,7 +345,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/sync-wave
+    targetRevision: main
     path: applications/pvcviewer-controller/upstream/base
   destination:
     server: https://kubernetes.default.svc
@@ -382,7 +382,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/sync-wave
+    targetRevision: main
     path: common/user-namespace/base
   destination:
     server: https://kubernetes.default.svc
@@ -458,7 +458,7 @@ spec:
   project: default
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-    targetRevision: feat/sync-wave
+    targetRevision: main
     path: bootstrap/apps/kubeflow
   destination:
     server: https://kubernetes.default.svc
@@ -823,6 +823,6 @@ When adding new applications:
 ## 📝 Notes
 
 - **Repository**: https://github.com/minhhcuongg-theonefour/k8s-inspect
-- **Branch**: feat/sync-wave
+- **Branch**: main
 - **ArgoCD Version**: 8.5.9
 - **Last Updated**: 2025-10-09

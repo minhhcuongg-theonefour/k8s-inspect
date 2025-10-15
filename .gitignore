@@ -16,6 +16,9 @@
 # Makefile
 # /Makefile
 
+# Environment files
+/env.*
+
 # Helm charts
 **/.helm/
 **/charts/

@@ -10,7 +10,7 @@
 #=============================================================================
 
 REPO_URL ?= https://github.com/minhhcuongg-theonefour/k8s-inspect.git
-TARGET_REVISION ?= feat/sync-wave
+TARGET_REVISION ?= main
 
 #=============================================================================
 # Help
