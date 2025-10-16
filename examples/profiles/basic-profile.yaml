@@ -1,0 +1,8 @@
+apiVersion: kubeflow.org/v1
+kind: Profile
+metadata:
+  name: data-scientist-profile
+spec:
+  owner:
+    kind: User
+    name: datascientist@example.com # Replace with actual user email from Dex

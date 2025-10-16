@@ -1,0 +1,22 @@
+apiVersion: kubeflow.org/v1
+kind: Profile
+metadata:
+  name: ml-engineer-profile
+spec:
+  owner:
+    kind: User
+    name: mlengineer@example.com # Replace with actual user email from Dex
+  resourceQuotaSpec:
+    hard:
+      # CPU quota (in cores)
+      cpu: "4"
+      # Memory quota
+      memory: 8Gi
+      # GPU quota (if you have GPU nodes)
+      requests.nvidia.com/gpu: "2"
+      # Number of PVCs allowed
+      persistentvolumeclaims: "5"
+      # Total storage that can be requested
+      requests.storage: "50Gi"
+      # Maximum number of pods
+      pods: "50"

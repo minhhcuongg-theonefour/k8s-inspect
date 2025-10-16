@@ -1,0 +1,67 @@
+# This is an example Dex ConfigMap with multiple users
+# To use this, you need to:
+# 1. Generate password hashes for each user
+# 2. Update common/dex/base/dex-passwords.yaml with the password hashes
+# 3. Apply this ConfigMap: kubectl apply -f common/dex/overlays/oauth2-proxy/config-map.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dex
+  namespace: auth
+data:
+  config.yaml: |
+    issuer: http://dex.auth.svc.cluster.local:5556/dex
+    storage:
+      type: kubernetes
+      config:
+        inCluster: true
+    web:
+      http: 0.0.0.0:5556
+    logger:
+      level: "debug"
+      format: text
+    oauth2:
+      skipApprovalScreen: true
+    enablePasswordDB: true
+    staticPasswords:
+    # Default user
+    - email: user@example.com
+      hashFromEnv: DEX_USER_PASSWORD
+      username: user
+      userID: "15841185641784"
+
+    # Data Scientist
+    - email: datascientist@example.com
+      hashFromEnv: DEX_DATASCIENTIST_PASSWORD
+      username: datascientist
+      userID: "15841185641785"
+
+    # ML Engineer
+    - email: mlengineer@example.com
+      hashFromEnv: DEX_MLENGINEER_PASSWORD
+      username: mlengineer
+      userID: "15841185641786"
+
+    # Team Lead
+    - email: team-lead@example.com
+      hashFromEnv: DEX_TEAMLEAD_PASSWORD
+      username: teamlead
+      userID: "15841185641787"
+
+    # Team Members
+    - email: member1@example.com
+      hashFromEnv: DEX_MEMBER1_PASSWORD
+      username: member1
+      userID: "15841185641788"
+
+    - email: member2@example.com
+      hashFromEnv: DEX_MEMBER2_PASSWORD
+      username: member2
+      userID: "15841185641789"
+
+    staticClients:
+    - idEnv: OIDC_CLIENT_ID
+      redirectURIs: ["/oauth2/callback"]
+      name: 'Dex Login Application'
+      secretEnv: OIDC_CLIENT_SECRET

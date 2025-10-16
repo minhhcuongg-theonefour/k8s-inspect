@@ -15,9 +15,67 @@ Make sure the "VirtualService" CRD is installed on the destination cluster.
 ```
 
 **Root Cause:** The prerequisite `kubeflow-common-services` application (sync wave 0) was misconfigured and failing to deploy Istio CRDs and other foundational components.
+# ArgoCD Sync Issue Analysis and Resolution
+
+**Date:** October 16, 2025
+**Issue:** Kubeflow Web Apps failing to sync due to missing Istio CRDs
+**Status:** ✅ RESOLVED
 
 ---
 
+## Executive Summary
+
+The `kubeflow-web-apps` ArgoCD application was failing to sync with the error:
+```
+The Kubernetes API could not find networking.istio.io/VirtualService for requested resource...
+Make sure the "VirtualService" CRD is installed on the destination cluster.
+```
+
+**Root Cause:** The prerequisite `kubeflow-common-services` application (sync wave 0) was misconfigured and failing to deploy Istio CRDs and other foundational components.
+
+---
+
+## Problem Analysis
+
+### 1. Sync Wave Configuration (✅ Correct)
+
+The sync wave ordering was properly configured:
+- **Wave 0:** `kubeflow-common-services` - Foundation (Cert-Manager, Istio, Dex, OAuth2-Proxy, Knative)
+- **Wave 4:** `kubeflow-web-apps` - Web UIs (Central Dashboard, Volumes Web App, Tensorboard Web App)
+
+### 2. Common Services Application Issues (❌ Broken)
+
+The `kubeflow-common-services` app had **three critical issues**:
+
+#### Issue 1: InvalidSpecError
+```
+Namespace for default-install-config-9h2h2b6hbk /v1, Kind=ConfigMap is missing.
+```
+
+#### Issue 2: SharedResourceWarning (50+ conflicts)
+Resources managed by **multiple ArgoCD applications simultaneously**:
+- `jobset-*`, `kubeflow-trainer-*` resources: in BOTH `kubeflow-common-services` AND `kubeflow-trainer`
+- `spark-operator-*` resources: in BOTH `kubeflow-common-services` AND `kubeflow-spark`
+
+#### Issue 3: Incorrect Scope
+The common-services app pointed to `example/kustomization.yaml` which included:
+- ❌ All Kubeflow applications (Pipelines, Katib, Jupyter, KServe, etc.)
+- ❌ Application-specific components (Trainer, Spark, etc.)
+- ✅ Common infrastructure (Cert-Manager, Istio, Dex, etc.)
+
+This created resource conflicts because individual apps also managed the same resources.
+
+### 3. Cascade Failure
+
+```
+kubeflow-common-services (wave 0) FAILED
+    ↓
+Istio CRDs NOT installed
+    ↓
+kubeflow-web-apps (wave 4) CANNOT sync
+    ↓
+All dependent apps BLOCKED
+```
 ## Problem Analysis
 
 ### 1. Sync Wave Configuration (✅ Correct)
@@ -68,12 +126,25 @@ All dependent apps BLOCKED
 
 Created a new kustomization at `example/common-component-chart/kustomization.yaml` that **ONLY** includes foundational infrastructure:
 
+## Solution Implemented
+
+### Step 1: Create Dedicated Common Services Kustomization
+
+Created a new kustomization at `example/common-component-chart/kustomization.yaml` that **ONLY** includes foundational infrastructure:
+
 ```yaml
 resources:
   # Cert-Manager
   - ../../common/cert-manager/base
   - ../../common/cert-manager/kubeflow-issuer/base
+  # Cert-Manager
+  - ../../common/cert-manager/base
+  - ../../common/cert-manager/kubeflow-issuer/base
 
+  # Istio (CRDs, Namespace, Installation)
+  - ../../common/istio/istio-crds/base
+  - ../../common/istio/istio-namespace/base
+  - ../../common/istio/istio-install/overlays/oauth2-proxy
   # Istio (CRDs, Namespace, Installation)
   - ../../common/istio/istio-crds/base
   - ../../common/istio/istio-namespace/base
@@ -84,7 +155,15 @@ resources:
 
   # Dex
   - ../../common/dex/overlays/oauth2-proxy
+  # oauth2-proxy
+  - ../../common/oauth2-proxy/overlays/m2m-dex-only
 
+  # Dex
+  - ../../common/dex/overlays/oauth2-proxy
+
+  # Knative
+  - ../../common/knative/knative-serving/overlays/gateways
+  - ../../common/istio/cluster-local-gateway/base
   # Knative
   - ../../common/knative/knative-serving/overlays/gateways
   - ../../common/istio/cluster-local-gateway/base
@@ -100,7 +179,30 @@ resources:
 
   # Kubeflow Istio Resources
   - ../../common/istio/kubeflow-istio-resources/base
+  # Kubeflow namespace
+  - ../../common/kubeflow-namespace/base
+
+  # NetworkPolicies
+  - ../../common/networkpolicies/base
+
+  # Kubeflow Roles
+  - ../../common/kubeflow-roles/base
+
+  # Kubeflow Istio Resources
+  - ../../common/istio/kubeflow-istio-resources/base
 ```
+
+**Key Exclusions:**
+- ❌ Trainer components (managed by `kubeflow-trainer` app)
+- ❌ Spark components (managed by `kubeflow-spark` app)
+- ❌ Pipelines (managed by `kubeflow-pipelines` app)
+- ❌ Jupyter (managed by `kubeflow-jupyter` app)
+- ❌ Katib (managed by `kubeflow-katib` app)
+- ❌ KServe (managed by `kubeflow-kserve` app)
+
+### Step 2: Update ArgoCD Application
+
+Modified `bootstrap/apps/kubeflow/common-services.yaml`:
 
 **Key Exclusions:**
 - ❌ Trainer components (managed by `kubeflow-trainer` app)
@@ -311,6 +413,31 @@ Wave  5: Optional services (Spark, Model Registry)
 - `example/kustomization.yaml` - Original (full) kustomization
 
 ---
+## 🔧 SSL/Port-Forward Access Fix
+
+### Problem: "No Healthy Upstream" Error
+When accessing Kubeflow dashboard via port-forward, you may encounter SSL/TLS errors or "no healthy upstream" messages.
+
+### Root Cause
+Web application pods fail to start due to Pod Security Standards (PSS) violations in the `kubeflow` namespace.
+
+### Solution
+```bash
+# 1. Fix Pod Security Standards (change from 'restricted' to 'baseline')
+kubectl patch namespace kubeflow -p '{"metadata":{"labels":{"pod-security.kubernetes.io/enforce":"baseline"}}}'
+
+# 2. Restart failed web application deployments
+kubectl rollout restart deployment centraldashboard -n kubeflow
+kubectl rollout restart deployment jupyter-web-app-deployment -n kubeflow
+kubectl rollout restart deployment volumes-web-app-deployment -n kubeflow
+kubectl rollout restart deployment tensorboards-web-app-deployment -n kubeflow
+
+# 3. Verify pods are running
+kubectl get pods -n kubeflow | grep -E "(centraldashboard|web-app)"
+
+# 4. Access dashboard without SSL issues
+kubectl port-forward svc/istio-ingressgateway -n istio-system 8080:80
+# Visit: http://localhost:8080 (no SSL required)
 
 ## Conclusion
 

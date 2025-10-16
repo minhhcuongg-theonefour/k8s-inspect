@@ -1,0 +1,37 @@
+apiVersion: kubeflow.org/v1
+kind: Profile
+metadata:
+  name: data-science-team
+spec:
+  owner:
+    kind: User
+    name: team-lead@example.com # Replace with team lead's email
+  resourceQuotaSpec:
+    hard:
+      cpu: "16"
+      memory: 32Gi
+      requests.nvidia.com/gpu: "4"
+      persistentvolumeclaims: "20"
+      requests.storage: "200Gi"
+      pods: "100"
+---
+# Additional RoleBinding to give team members access
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: team-member-access
+  namespace: data-science-team
+subjects:
+  - kind: User
+    name: member1@example.com # Replace with team member emails
+    apiGroup: rbac.authorization.k8s.io
+  - kind: User
+    name: member2@example.com
+    apiGroup: rbac.authorization.k8s.io
+  - kind: User
+    name: member3@example.com
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: ClusterRole
+  name: kubeflow-edit # Options: kubeflow-admin, kubeflow-edit, kubeflow-view
+  apiGroup: rbac.authorization.k8s.io
