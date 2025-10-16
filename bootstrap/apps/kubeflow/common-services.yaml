@@ -22,10 +22,12 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - ApplyOutOfSyncOnly=true
+      - Force=true
     retry:
-      limit: 5
+      limit: 20
       backoff:
-        duration: 5s
+        duration: 20s
         factor: 2
         maxDuration: 3m
   ignoreDifferences:

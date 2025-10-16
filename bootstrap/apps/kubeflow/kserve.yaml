@@ -16,6 +16,9 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: kubeflow
+  dependsOn:
+    - kubeflow-common-services
+    - kubeflow-jupyter
   syncPolicy:
     automated:
       prune: true
