@@ -12,7 +12,7 @@ spec:
   source:
     repoURL: https://github.com/minhhcuongg-theonefour/k8s-inspect.git # Replace with your repo
     targetRevision: main
-    path: example
+    path: example/common-component-chart
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
